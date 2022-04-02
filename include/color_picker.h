@@ -1,1 +1,1 @@
-int color_picker();
+int color_picker(Mat img);

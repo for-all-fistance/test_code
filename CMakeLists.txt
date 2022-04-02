@@ -9,6 +9,7 @@ add_executable(${PROJECT_NAME}
     "src/ImgPreProcess.cpp"
     "src/objClassifier.cpp"
     "src/getTarget2dPosition.cpp"
+    "src/color_picker.cpp"
 )
 
 find_package(OpenCV 4 REQUIRED)

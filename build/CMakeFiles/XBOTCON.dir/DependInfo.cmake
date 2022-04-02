@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/lijialiang/xbotcon/main.cpp" "/home/lijialiang/xbotcon/build/CMakeFiles/XBOTCON.dir/main.cpp.o"
   "/home/lijialiang/xbotcon/src/ImgPreProcess.cpp" "/home/lijialiang/xbotcon/build/CMakeFiles/XBOTCON.dir/src/ImgPreProcess.cpp.o"
+  "/home/lijialiang/xbotcon/src/color_picker.cpp" "/home/lijialiang/xbotcon/build/CMakeFiles/XBOTCON.dir/src/color_picker.cpp.o"
   "/home/lijialiang/xbotcon/src/distancedetection.cpp" "/home/lijialiang/xbotcon/build/CMakeFiles/XBOTCON.dir/src/distancedetection.cpp.o"
   "/home/lijialiang/xbotcon/src/getTarget2dPosition.cpp" "/home/lijialiang/xbotcon/build/CMakeFiles/XBOTCON.dir/src/getTarget2dPosition.cpp.o"
   "/home/lijialiang/xbotcon/src/kalman_filter.cpp" "/home/lijialiang/xbotcon/build/CMakeFiles/XBOTCON.dir/src/kalman_filter.cpp.o"

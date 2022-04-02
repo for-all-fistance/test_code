@@ -177,6 +177,33 @@ src/ImgPreProcess.cpp.s:
 	$(MAKE) -f CMakeFiles/XBOTCON.dir/build.make CMakeFiles/XBOTCON.dir/src/ImgPreProcess.cpp.s
 .PHONY : src/ImgPreProcess.cpp.s
 
+src/color_picker.o: src/color_picker.cpp.o
+
+.PHONY : src/color_picker.o
+
+# target to build an object file
+src/color_picker.cpp.o:
+	$(MAKE) -f CMakeFiles/XBOTCON.dir/build.make CMakeFiles/XBOTCON.dir/src/color_picker.cpp.o
+.PHONY : src/color_picker.cpp.o
+
+src/color_picker.i: src/color_picker.cpp.i
+
+.PHONY : src/color_picker.i
+
+# target to preprocess a source file
+src/color_picker.cpp.i:
+	$(MAKE) -f CMakeFiles/XBOTCON.dir/build.make CMakeFiles/XBOTCON.dir/src/color_picker.cpp.i
+.PHONY : src/color_picker.cpp.i
+
+src/color_picker.s: src/color_picker.cpp.s
+
+.PHONY : src/color_picker.s
+
+# target to generate assembly for a file
+src/color_picker.cpp.s:
+	$(MAKE) -f CMakeFiles/XBOTCON.dir/build.make CMakeFiles/XBOTCON.dir/src/color_picker.cpp.s
+.PHONY : src/color_picker.cpp.s
+
 src/distancedetection.o: src/distancedetection.cpp.o
 
 .PHONY : src/distancedetection.o
@@ -300,6 +327,9 @@ help:
 	@echo "... src/ImgPreProcess.o"
 	@echo "... src/ImgPreProcess.i"
 	@echo "... src/ImgPreProcess.s"
+	@echo "... src/color_picker.o"
+	@echo "... src/color_picker.i"
+	@echo "... src/color_picker.s"
 	@echo "... src/distancedetection.o"
 	@echo "... src/distancedetection.i"
 	@echo "... src/distancedetection.s"

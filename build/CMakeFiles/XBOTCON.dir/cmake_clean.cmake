@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/XBOTCON.dir/main.cpp.o"
   "CMakeFiles/XBOTCON.dir/src/ImgPreProcess.cpp.o"
+  "CMakeFiles/XBOTCON.dir/src/color_picker.cpp.o"
   "CMakeFiles/XBOTCON.dir/src/distancedetection.cpp.o"
   "CMakeFiles/XBOTCON.dir/src/getTarget2dPosition.cpp.o"
   "CMakeFiles/XBOTCON.dir/src/kalman_filter.cpp.o"

@@ -38,5 +38,6 @@ int kalman_filter(vector<Point2f> rect)
 
 		//kalman prediction
 		KF.predict();
+		cout<<"预测下一帧装甲板位于：["<<KF.statePre.at<float>(0)<<","<<KF.statePre.at<float>(1)<<"]"<<endl;
 		return 0;
 }

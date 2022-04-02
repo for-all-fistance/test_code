@@ -14,6 +14,7 @@
 #include "/home/lijialiang/xbotcon/include/getTargtet2dPosition.h"
 #include "/home/lijialiang/xbotcon/include/objClassifier.h"
 #include "/home/lijialiang/xbotcon/include/ImgPreprocess.h"
+#include "/home/lijialiang/xbotcon/include/color_picker.h"
 
 using namespace cv;
 using namespace std;
@@ -29,7 +30,7 @@ vector<RotatedRect> armer_rect;
 vector<RotatedRect> energy_rect;
 vector<Point2f> armer_center;
 
-
+//git
 ///////////////////////////////////////////////////////////////////
 int main() 
 {
@@ -37,17 +38,19 @@ int main()
 	Size imageSize = Size(imageWidth, imageHeight);
 	vector< vector<Point2f>> armer_refer_imgPoint;//对应的装甲板2D图像点
 	vector< vector<Point2f> > energy_refer_imgPoint;//对应的能量条2D图像点
-
+	long int frame=0;
 	while (true)
 	{
 		cap >> img;
 		if(img.empty())
 			break;
-		//imshow("origin",img);
-		Mat dst_armer;
-		Mat dst_energy;
-		ImgPreProcess(img,dst_armer,imageSize,ARMERMODE);
-		bool success=armerClassifier(dst_armer,img,armer_rect,armer_center);
+		++frame;
+		cout<<"\n这是第"<<frame<<"帧"<<endl;
+		//color_picker(img);	
+		imshow("origin",img);
+		Mat dst;
+		ImgPreProcess(img,dst,imageSize,ARMERMODE);
+		bool success=armerClassifier(dst,img,armer_rect,armer_center);
 		if(success)
 		{
 			getTarget2dPosition(armer_rect[armer_rect.size()-1],armer_refer_imgPoint,Point2f(0,0));
@@ -56,16 +59,14 @@ int main()
 		}
 		else
 		{
-			ImgPreProcess(img,dst_energy,imageSize,ENERGYMODE);//优先检测装甲板，故在检测到装甲板的情况下不再检测能量块
-			success=energyClassifier(dst_energy,img,energy_rect);
+			success=energyClassifier(dst,img,energy_rect);
 			if(success)
 			{
 				getTarget2dPosition(energy_rect[energy_rect.size()-1],energy_refer_imgPoint,Point2f(0,0));
 				distancedetection(energy_refer_imgPoint,ENERGYMODE);
 			}
 		}
-		//imshow("image",calibratedImg);
-		waitKey(15);
+		waitKey(100);
 	}
 	return 0;
 }
