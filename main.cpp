@@ -43,7 +43,7 @@ int main()
 		cap >> img;
 		if(img.empty())
 			break;
-		imshow("origin",img);
+		//imshow("origin",img);
 		Mat dst_armer;
 		Mat dst_energy;
 		ImgPreProcess(img,dst_armer,imageSize,ARMERMODE);
