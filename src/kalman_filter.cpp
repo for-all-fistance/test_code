@@ -11,7 +11,7 @@ const int stateNum=4;                                      //状态值10×1向�
 const int measureNum=4;                                    //测量值10×1向量(x,y,weight,height,angle,△x,△y......)	                               
 KalmanFilter KF(stateNum, measureNum, 0);					//创建一个卡尔曼滤波器，****无需重复定义****
 
-int kalman_filter(vector<Point2f> rect)
+Point2f kalman_filter(vector<Point2f> rect)
 {
 
 	/////////////////////kalman filter params////////////////////
@@ -39,5 +39,5 @@ int kalman_filter(vector<Point2f> rect)
 		//kalman prediction
 		KF.predict();
 		cout<<"预测下一帧装甲板位于：["<<KF.statePre.at<float>(0)<<","<<KF.statePre.at<float>(1)<<"]"<<endl;
-		return 0;
+		return Point2f(KF.statePre.at<float>(0),KF.statePre.at<float>(1));
 }

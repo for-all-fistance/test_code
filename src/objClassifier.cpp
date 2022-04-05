@@ -41,8 +41,13 @@ int armerClassifier(Mat &img,Mat origin,vector<RotatedRect> &armer_rect,vector<P
     for(int i=0;i<contours.size();++i)
     {
         float area=contourArea(contours[i]);
-        float areaRate=minAreaRect(contours[i]).size.area()/area;//最小外接矩形与轮廓的面积比值
-        float lenthRate=minAreaRect(contours[i]).size.width/minAreaRect(contours[i]).size.height;//矩形长宽比
+        RotatedRect minAreaRect_armer=minAreaRect(contours[i]);
+        float areaRate=minAreaRect_armer.size.area()/area;//最小外接矩形与轮廓的面积比值
+        float height=minAreaRect_armer.size.height;
+        float width=minAreaRect_armer.size.width;
+        if(height<=width)
+            swap(height,width);
+        float lenthRate=height/width;//矩形长宽比
         vector<vector<Point>> HullPoints(contours.size());
         convexHull(Mat(contours[i]),HullPoints[i],false);//寻找凸包
         float solidity=contourArea(HullPoints[i])/area;//凸度
@@ -50,7 +55,7 @@ int armerClassifier(Mat &img,Mat origin,vector<RotatedRect> &armer_rect,vector<P
         // cout<<"areaRate:"<<areaRate<<endl;
         // cout<<"lenthRate:"<<lenthRate<<endl;
         // cout<<"solidity:"<<solidity<<endl;
-        if(area>100&&area<250000/*去除整个图片的边框！*/&&areaRate>MINAREARATE_ARMER&&areaRate<MAXAREARATE_ARMER&&lenthRate>MINLENTHRATE_ARMER&&solidity>MINSOLIDITY_ARMER)
+        if(area>50&&area<250000/*去除整个图片的边框！*/&&areaRate>MINAREARATE_ARMER&&areaRate<MAXAREARATE_ARMER&&lenthRate>MINLENTHRATE_ARMER&&solidity>MINSOLIDITY_ARMER)
         {
             armer_rect.push_back(minAreaRect(contours[i]));
             imshow("armer img",img);
@@ -66,7 +71,7 @@ int armerClassifier(Mat &img,Mat origin,vector<RotatedRect> &armer_rect,vector<P
                 cout<<"成功找到两个符合条件的灯条，开始进行灯条匹配"<<endl;
                 for(int j=2;j<=3;++j)
                 {
-                    float error=distance_calc(armer_rect[armer_rect.size()-1],armer_rect[armer_rect.size()-j])/armer_rect[armer_rect.size()-1].size.height;
+                    float error=distance_calc(armer_rect[armer_rect.size()-1],armer_rect[armer_rect.size()-j])/width;
                     //cout<<"error:"<<error<<endl;
                     if(error<MAX_DISTANCE_RATE_ERROR&&error>MIN_DISTANCE_RATE_ERROR)
                     {

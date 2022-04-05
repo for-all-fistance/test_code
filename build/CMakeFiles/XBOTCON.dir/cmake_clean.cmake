@@ -6,6 +6,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/XBOTCON.dir/src/getTarget2dPosition.cpp.o"
   "CMakeFiles/XBOTCON.dir/src/kalman_filter.cpp.o"
   "CMakeFiles/XBOTCON.dir/src/objClassifier.cpp.o"
+  "CMakeFiles/XBOTCON.dir/src/position_adjust.cpp.o"
   "XBOTCON"
   "XBOTCON.pdb"
 )

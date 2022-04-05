@@ -74,12 +74,12 @@ clean: CMakeFiles/XBOTCON.dir/clean
 CMakeFiles/XBOTCON.dir/all:
 	$(MAKE) -f CMakeFiles/XBOTCON.dir/build.make CMakeFiles/XBOTCON.dir/depend
 	$(MAKE) -f CMakeFiles/XBOTCON.dir/build.make CMakeFiles/XBOTCON.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/lijialiang/xbotcon/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Built target XBOTCON"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/lijialiang/xbotcon/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9 "Built target XBOTCON"
 .PHONY : CMakeFiles/XBOTCON.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/XBOTCON.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/lijialiang/xbotcon/build/CMakeFiles 8
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/lijialiang/xbotcon/build/CMakeFiles 9
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/XBOTCON.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/lijialiang/xbotcon/build/CMakeFiles 0
 .PHONY : CMakeFiles/XBOTCON.dir/rule

@@ -10,6 +10,7 @@ add_executable(${PROJECT_NAME}
     "src/objClassifier.cpp"
     "src/getTarget2dPosition.cpp"
     "src/color_picker.cpp"
+    "src/position_adjust.cpp"
 )
 
 find_package(OpenCV 4 REQUIRED)

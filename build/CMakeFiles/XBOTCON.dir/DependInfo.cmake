@@ -11,6 +11,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/lijialiang/xbotcon/src/getTarget2dPosition.cpp" "/home/lijialiang/xbotcon/build/CMakeFiles/XBOTCON.dir/src/getTarget2dPosition.cpp.o"
   "/home/lijialiang/xbotcon/src/kalman_filter.cpp" "/home/lijialiang/xbotcon/build/CMakeFiles/XBOTCON.dir/src/kalman_filter.cpp.o"
   "/home/lijialiang/xbotcon/src/objClassifier.cpp" "/home/lijialiang/xbotcon/build/CMakeFiles/XBOTCON.dir/src/objClassifier.cpp.o"
+  "/home/lijialiang/xbotcon/src/position_adjust.cpp" "/home/lijialiang/xbotcon/build/CMakeFiles/XBOTCON.dir/src/position_adjust.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

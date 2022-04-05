@@ -1,0 +1,1 @@
+int position_adjust(Point2f &);

@@ -69,8 +69,8 @@ rebuild_cache/fast: rebuild_cache
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/bin/cmake-gui -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -312,6 +312,33 @@ src/objClassifier.cpp.s:
 	$(MAKE) -f CMakeFiles/XBOTCON.dir/build.make CMakeFiles/XBOTCON.dir/src/objClassifier.cpp.s
 .PHONY : src/objClassifier.cpp.s
 
+src/position_adjust.o: src/position_adjust.cpp.o
+
+.PHONY : src/position_adjust.o
+
+# target to build an object file
+src/position_adjust.cpp.o:
+	$(MAKE) -f CMakeFiles/XBOTCON.dir/build.make CMakeFiles/XBOTCON.dir/src/position_adjust.cpp.o
+.PHONY : src/position_adjust.cpp.o
+
+src/position_adjust.i: src/position_adjust.cpp.i
+
+.PHONY : src/position_adjust.i
+
+# target to preprocess a source file
+src/position_adjust.cpp.i:
+	$(MAKE) -f CMakeFiles/XBOTCON.dir/build.make CMakeFiles/XBOTCON.dir/src/position_adjust.cpp.i
+.PHONY : src/position_adjust.cpp.i
+
+src/position_adjust.s: src/position_adjust.cpp.s
+
+.PHONY : src/position_adjust.s
+
+# target to generate assembly for a file
+src/position_adjust.cpp.s:
+	$(MAKE) -f CMakeFiles/XBOTCON.dir/build.make CMakeFiles/XBOTCON.dir/src/position_adjust.cpp.s
+.PHONY : src/position_adjust.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -342,6 +369,9 @@ help:
 	@echo "... src/objClassifier.o"
 	@echo "... src/objClassifier.i"
 	@echo "... src/objClassifier.s"
+	@echo "... src/position_adjust.o"
+	@echo "... src/position_adjust.i"
+	@echo "... src/position_adjust.s"
 .PHONY : help
 
 

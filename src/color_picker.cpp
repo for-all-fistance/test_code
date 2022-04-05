@@ -1,4 +1,4 @@
-#if 1
+#if 0
 //////////color picker/////////////////
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
