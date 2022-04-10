@@ -1,1 +1,0 @@
-Point2f kalman_filter(vector<Point2f> rect);

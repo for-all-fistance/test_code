@@ -9,18 +9,12 @@
 #include <eigen3/Eigen/Dense>  //稠密矩阵的代数运算
 #include <opencv2/core/eigen.hpp>
 #include <iostream>
-#include "/home/lijialiang/xbotcon/include/distancedetection.h"
-#include "/home/lijialiang/xbotcon/include/kalman_filter.h"
-#include "/home/lijialiang/xbotcon/include/getTargtet2dPosition.h"
-#include "/home/lijialiang/xbotcon/include/objClassifier.h"
-#include "/home/lijialiang/xbotcon/include/ImgPreprocess.h"
-#include "/home/lijialiang/xbotcon/include/color_picker.h"
-#include "/home/lijialiang/xbotcon/include/position_adjust.h"
+#include "include/head.h"
 using namespace cv;
 using namespace std;
 
-VideoCapture cap("/home/lijialiang/视频/装甲板测试视频.avi");
-
+// VideoCapture cap("/home/lijialiang/视频/装甲板测试视频.avi");
+VideoCapture cap(0);
 vector<RotatedRect> rect;//
 const int imageWidth = 720; //定义图片大小，即摄像头的分辨率
 const int imageHeight = 480;

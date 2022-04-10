@@ -23,7 +23,6 @@ float distancedetection(vector<vector<Point2f>> refer_imgPoint,int mode)
 	Mat tvecs;//平移向量
 	vector<Point3f> refer_objectPoints;//自定义的3D坐标点
 	Mat rmats;//旋转矩阵
-	//Mat tmats;//平移矩阵
 	if(mode==0)
 	{
 		refer_objectPoints.push_back(Point3f(0, 0, 0));
@@ -46,7 +45,7 @@ float distancedetection(vector<vector<Point2f>> refer_imgPoint,int mode)
 	cv2eigen(tvecs, T_n);
 	Eigen::Vector3f P_oc;
 	P_oc = -R_n.inverse()*T_n;
-	cout<<"当前距离为："<<"["<<P_oc<<"]"<<endl;
+	cout<<"当前3D位姿坐标为："<<"["<<P_oc<<"]"<<endl;
 	float distance=sqrt(pow(P_oc.x(),2)+pow(P_oc.y(),2)+pow(P_oc.z(),2));
 	rmats.release();//旋转矩阵
 	return(distance);

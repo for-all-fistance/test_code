@@ -1,1 +1,0 @@
-int ImgPreProcess(Mat &img,Mat &dst,Size &imageSize,int mode);

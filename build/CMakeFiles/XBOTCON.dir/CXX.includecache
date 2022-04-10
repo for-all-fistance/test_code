@@ -6,19 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/lijialiang/xbotcon/include/ImgPreprocess.h
-
-/home/lijialiang/xbotcon/include/color_picker.h
-
-/home/lijialiang/xbotcon/include/distancedetection.h
-
-/home/lijialiang/xbotcon/include/getTargtet2dPosition.h
-
-/home/lijialiang/xbotcon/include/kalman_filter.h
-
-/home/lijialiang/xbotcon/include/objClassifier.h
-
-/home/lijialiang/xbotcon/include/position_adjust.h
+/home/lijialiang/xbotcon/include/head.h
 
 /home/lijialiang/xbotcon/main.cpp
 opencv2/imgcodecs.hpp
@@ -41,20 +29,8 @@ opencv2/core/eigen.hpp
 -
 iostream
 -
-/home/lijialiang/xbotcon/include/distancedetection.h
--
-/home/lijialiang/xbotcon/include/kalman_filter.h
--
-/home/lijialiang/xbotcon/include/getTargtet2dPosition.h
--
-/home/lijialiang/xbotcon/include/objClassifier.h
--
-/home/lijialiang/xbotcon/include/ImgPreprocess.h
--
-/home/lijialiang/xbotcon/include/color_picker.h
--
-/home/lijialiang/xbotcon/include/position_adjust.h
--
+include/head.h
+/home/lijialiang/xbotcon/include/head.h
 
 /usr/include/opencv4/opencv2/calib3d.hpp
 opencv2/core.hpp
