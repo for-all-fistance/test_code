@@ -18,7 +18,7 @@ int ImgPreProcess(Mat &img,Mat &dst,Size &imageSize,int mode)
 {
 /////////////////调曝光和对比度(伽马增益)//////////
        Mat gamaimg;
-       createTrackbar("gama","gama",&gama,250);//创建滑动条
+       createTrackbar("gama","gama",&gama,300);//创建滑动条
     // 构建查找表
 	Mat lookUpTable(1, 256, CV_8U);
 	uchar* p = lookUpTable.ptr();
