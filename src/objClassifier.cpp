@@ -1,6 +1,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
+#include <vector>
 #include<cmath>
 #include<iostream>
 using namespace std;
@@ -30,14 +31,14 @@ inline float distance_calc(RotatedRect a,RotatedRect b)
     return(sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)));
 }
 
-
+int sort_energy(vector<RotatedRect> &energy_rect,int count);
 int armerClassifier(Mat &img,Mat origin,vector<RotatedRect> &armer_rect,vector<Point2f> &armer_center)
 {
     vector<Vec4i> hierarchy;//储存边界的拓扑信息，如前一个轮廓，后一个轮廓，父轮廓等
     vector<vector<Point>> contours;//储存边界信息,不能使用point2f类型，contours都是point(int)类型
     findContours(img, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_NONE);//寻找边界
     int count=0;
-    cout<<"共找到"<<contours.size()<<"个轮廓"<<endl;;
+    cout<<"共找到"<<contours.size()<<"个轮廓"<<endl;
     for(int i=0;i<contours.size();++i)
     {
         float area=contourArea(contours[i]);
@@ -91,6 +92,7 @@ int armerClassifier(Mat &img,Mat origin,vector<RotatedRect> &armer_rect,vector<P
 
 int energyClassifier(Mat &img,Mat origin,vector<RotatedRect> &energy_rect)
 {
+    int count=0;
     vector<Vec4i> hierarchy;//储存边界的拓扑信息，如前一个轮廓，后一个轮廓，父轮廓等
     vector<vector<Point>> contours;//储存边界信息
     findContours(img, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);//寻找边界
@@ -102,19 +104,50 @@ int energyClassifier(Mat &img,Mat origin,vector<RotatedRect> &energy_rect)
         vector<vector<Point>> HullPoints(contours.size());
         convexHull(Mat(contours[i]),HullPoints[i],false);
         float solidity=area/contourArea(HullPoints[i]);
-        Point2f temp[4];
-        minAreaRect(contours[i]).points(temp);
-        for(int i=0;i<4;++i)
-        {
-            line(origin,temp[i],temp[i%4],(149,255,0));
-        }
+        // Point2f temp[4];
+        // minAreaRect(contours[i]).points(temp);
+        // for(int i=0;i<4;++i)
+        // {
+        //     line(origin,temp[i],temp[i%4],(149,255,0));
+        // }
         //imshow("energy img",img);
         if(area>100&&areaRate>MINAREARATE_ARMER&&areaRate<MAXAREARATE_ARMER&&lenthRate>MINLENTHRATE_ARMER&&solidity>MINSOLIDITY_ARMER)
             {
                 energy_rect.push_back(minAreaRect(contours[i]));
-                return 1;
+                count++;
             }
     }
+    if(count>1)//能量块的攻击从上到下
+        sort_energy(energy_rect,count);
     return 0;
 }
 
+int sort_energy(vector<RotatedRect> &energy_rect,int count)
+{
+
+    for(int i=1;i<=count;++i)
+    {
+        for(int j=1;j<=count;)
+            {
+                
+                if(energy_rect[energy_rect.size()-i].center.y<=energy_rect[energy_rect.size()-j].center.y)
+                {
+                    if(j==count)
+                        return i;
+                    ++j;
+                }
+                else
+                        break;
+            }
+    }
+    return 0;
+    //     vector<RotatedRect>::iterator target;
+    //     for(int i=1;i<count;++i)
+    //     {
+    //         target=energy_rect.end();
+    //         if((*target).center.y>(*(--target)).center.y)
+    //             energy_rect.erase(target);
+    //         else if(*target).center.y>(*(--target)).center.y)
+            
+    //     }
+}
