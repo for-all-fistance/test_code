@@ -68,7 +68,7 @@ int armerClassifier(Mat &img,Mat origin,vector<RotatedRect> &armer_rect,vector<P
                         count++;
                         if(count>1)
                         {
-                            for(int j=2;j<=3;++j)
+                            for(int j=2;j<=3;++j)//灯条匹配
                             {
                                 float error=distance_calc(armer_rect.back(),armer_rect[armer_rect.size()-j])/height;
                                 //cout<<"error:"<<error<<endl;
