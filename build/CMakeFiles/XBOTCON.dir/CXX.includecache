@@ -6,18 +6,18 @@
 
 #IncludeRegexTransform: 
 
-/home/lijialiang/xbotcon/main.cpp
-opencv2/core/core.hpp
-/home/lijialiang/xbotcon/opencv2/core/core.hpp
-opencv2/imgproc/imgproc.hpp
-/home/lijialiang/xbotcon/opencv2/imgproc/imgproc.hpp
-opencv2/calib3d/calib3d.hpp
-/home/lijialiang/xbotcon/opencv2/calib3d/calib3d.hpp
-opencv2/highgui/highgui.hpp
-/home/lijialiang/xbotcon/opencv2/highgui/highgui.hpp
-iostream
+/home/lijialiang/xbotcon/src/objClassifier.cpp
+opencv2/imgcodecs.hpp
 -
-fstream
+opencv2/highgui.hpp
+-
+opencv2/imgproc.hpp
+-
+vector
+-
+cmath
+-
+iostream
 -
 
 /usr/include/opencv4/opencv2/calib3d.hpp
@@ -27,10 +27,6 @@ opencv2/features2d.hpp
 /usr/include/opencv4/opencv2/opencv2/features2d.hpp
 opencv2/core/affine.hpp
 /usr/include/opencv4/opencv2/opencv2/core/affine.hpp
-
-/usr/include/opencv4/opencv2/calib3d/calib3d.hpp
-opencv2/calib3d.hpp
-/usr/include/opencv4/opencv2/calib3d/opencv2/calib3d.hpp
 
 /usr/include/opencv4/opencv2/core.hpp
 opencv2/core/cvdef.h
@@ -95,10 +91,6 @@ opencv2/core/check.hpp
 /usr/include/opencv4/opencv2/core/check.hpp
 opencv2/core/base.hpp
 -
-
-/usr/include/opencv4/opencv2/core/core.hpp
-opencv2/core.hpp
-/usr/include/opencv4/opencv2/core/opencv2/core.hpp
 
 /usr/include/opencv4/opencv2/core/cuda.hpp
 opencv2/core.hpp
@@ -860,10 +852,6 @@ opencv2/imgcodecs.hpp
 opencv2/videoio.hpp
 /usr/include/opencv4/opencv2/opencv2/videoio.hpp
 
-/usr/include/opencv4/opencv2/highgui/highgui.hpp
-opencv2/highgui.hpp
-/usr/include/opencv4/opencv2/highgui/opencv2/highgui.hpp
-
 /usr/include/opencv4/opencv2/imgcodecs.hpp
 opencv2/core.hpp
 /usr/include/opencv4/opencv2/opencv2/core.hpp
@@ -871,10 +859,6 @@ opencv2/core.hpp
 /usr/include/opencv4/opencv2/imgproc.hpp
 opencv2/core.hpp
 /usr/include/opencv4/opencv2/opencv2/core.hpp
-
-/usr/include/opencv4/opencv2/imgproc/imgproc.hpp
-opencv2/imgproc.hpp
-/usr/include/opencv4/opencv2/imgproc/opencv2/imgproc.hpp
 
 /usr/include/opencv4/opencv2/ml.hpp
 opencv2/core.hpp

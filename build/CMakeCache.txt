@@ -191,8 +191,14 @@ CMakeDemo_BINARY_DIR:STATIC=/home/lijialiang/xbotcon/build
 //Value Computed by CMake
 CMakeDemo_SOURCE_DIR:STATIC=/home/lijialiang/xbotcon
 
+//The directory containing a CMake configuration file for Eigen3.
+Eigen3_DIR:PATH=/usr/lib/cmake/eigen3
+
 //The directory containing a CMake configuration file for OpenCV.
 OpenCV_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/opencv4
+
+//Path to a library.
+WIRINGPI_LIBRARIES:FILEPATH=WIRINGPI_LIBRARIES-NOTFOUND
 
 //Value Computed by CMake
 XBOTCON_BINARY_DIR:STATIC=/home/lijialiang/xbotcon/build
