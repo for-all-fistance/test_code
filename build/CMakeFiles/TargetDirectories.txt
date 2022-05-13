@@ -1,3 +1,0 @@
-/home/lijialiang/xbotcon/build/CMakeFiles/rebuild_cache.dir
-/home/lijialiang/xbotcon/build/CMakeFiles/edit_cache.dir
-/home/lijialiang/xbotcon/build/CMakeFiles/XBOTCON.dir
