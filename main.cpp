@@ -34,7 +34,7 @@ const Mat distCoeff = (Mat_<double>(1, 5) << 0.1252247200301222, 0.3344879529935
 mutex mutex_fd;
 mutex mutex_send;
 condition_variable cv_send;
-void get_thread(char& command,int fd)//接受指令的线程
+void get_thread(char& command,int fd)
 {
 	while(true)
 	{
@@ -43,13 +43,13 @@ void get_thread(char& command,int fd)//接受指令的线程
 		{
 			command=serialGetchar(fd);
 			cout<<"get command"<<command<<endl;
-			serialFlush(fd); //清空缓冲区，防止重复接收
+			serialFlush(fd); //avoid  repeat reception
 		}
 		lock_fd.unlock();
-		this_thread::sleep_for(std::chrono::milliseconds(50));//休眠50ms
+		this_thread::sleep_for(std::chrono::milliseconds(50));
 	}
 }
-void send_thread(int fd,Point2f &point_angle)//发送数据给下位机的线程
+void send_thread(int fd,Point2f &point_angle)
 {
 	char *message;
 	while(true)
@@ -60,15 +60,15 @@ void send_thread(int fd,Point2f &point_angle)//发送数据给下位机的线程
 		message=new char[5];
 		snprintf(message,5,"%d",int(point_angle.x*10000));
 		serialPuts(fd,"x");  
-		serialPuts(fd,message);
-		serialPuts(fd,"y");  
+		serialPuts(fd,message);  
 		snprintf(message,5,"%d",int(point_angle.y*10000));
-		serialPuts(fd,message);;
+		serialPuts(fd,"y");  
+		serialPuts(fd,message);  
 		delete message;
 	}
 }
 
-Point2d angle_solver(Point2f &P_oc)//计算角度
+Point2d angle_solver(Point2f &P_oc)
 {
 	static double cx=cameraMatrix.at<double>(0,2);
 	static double cy=cameraMatrix.at<double>(1,2);
@@ -91,6 +91,7 @@ int main()
 	armer init_armer {Point2f(320,240),{},0,0,{},Rect(),{},{},Point2f(0,0),Point2f(0,0),Point2f(0,0)};
 	armers.push_back(init_armer);
 	char command='%';
+	//cout<<wiringPiSetup()<<endl;
 	if(-1==wiringPiSetup())
 		{
 			cout<<"serial error"<<endl;
@@ -123,6 +124,11 @@ int main()
 		{
 			Mat dst;
 			clock_t startTime1 = clock();
+			if(success)
+				{
+					//SetROI(img,armer_real_position.back());
+					//imshow("ROI",img);
+				}
 			ImgPreProcess_ARMER(img,dst);
 			clock_t endTime1 = clock();
 			cout << "preprocess用时："  << double(endTime1 - startTime1) / CLOCKS_PER_SEC << "s" << endl;
@@ -132,8 +138,8 @@ int main()
 			if(success)
 			{
 				getTarget2dPosition(armers,Point2f(0,0));
-				// for(int i=0;i<4;++i)
-				// 	circle(img,armers.back().armer_refer_imgPoint.at(i),5,Scalar(120,200,0),FILLED);
+				for(int i=0;i<4;++i)
+					circle(img,armers.back().armer_refer_imgPoint.at(i),5,Scalar(120,200,0),FILLED);
 				undistortPoints(armers.back().armer_refer_imgPoint,armers.back().armer_refer_imgPoint,cameraMatrix,distCoeff,noArray(),cameraMatrix);
 				armers.back().armer_center=(armers.back().armer_refer_imgPoint[1]+armers.back().armer_refer_imgPoint[3])/2.0;
 				gravity_offset_composite(armers);
