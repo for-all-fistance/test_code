@@ -14,13 +14,22 @@ const float MAXLENTHRATE_ARMER=7;//长宽比小于一定值
 const float MINSOLIDITY_ARMER=0.9;//轮廓的凸度(Solidity)大于一定值
 const float MAXSOLIDITY_ARMER=1.1;
 
-const float MAX_ANGLE_ERROR=15;//灯条仰角误差最大值
+const float MAX_ANGLE_ERROR=15;//灯条angle误差最大值
 
 const float MINAREARATE_ENERGY=2;
 const float MAXAREARATE_ENERGY=2;
 const float MINLENTHRATE_ENERGY=1.5;
 const float MINSOLIDITY_ENERGY=1;
 const float MAXSOLIDITY_ENERGY=1;
+
+inline float distance_calc(RotatedRect a,RotatedRect b)
+{
+    float x1=a.center.x;
+    float y1=a.center.y;
+    float x2=b.center.x;
+    float y2=b.center.y;
+    return(sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)));
+}
 
 int pair_armer(vector<armer>& armers,int count,armer &this_armer)
 {
@@ -53,7 +62,7 @@ int pair_armer(vector<armer>& armers,int count,armer &this_armer)
         {
             Rect2f r1=(*(target-i_small)).boundingRect();
             Rect2f r2=(*(target-j_small)).boundingRect();
-            Rect2f all_rect=r1|r2;//两个矩形的并集就是整个装甲板的区域
+            Rect2f all_rect=r1|r2;
             this_armer.armer_rect=all_rect;
             armers.push_back(this_armer);
             return 1;
