@@ -8,7 +8,7 @@ using namespace cv;
 
 const float width_error=20;
 const float height_error=20;
-int position_adjust(Point2f &target)//已弃用
+int position_adjust(Point2f &target)
 {
     char message[3];
     if(target.x>=360)

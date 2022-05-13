@@ -3,6 +3,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
 #include "/home/pi/Desktop/xbotcon/include/DEBUG.h"
+#include "/home/pi/Desktop/xbotcon/include/head.h"
 using namespace cv;
 using namespace std;
 
@@ -10,7 +11,7 @@ int ImgPreProcess_DEBUG(Mat &img,Mat &dst)
 {
        vector<Mat> channels;
        split(img,channels);//分离通道
-       threshold(channels[0],dst, 100, 255, THRESH_BINARY);   
+       threshold(channels[0],dst, 80, 255, THRESH_BINARY);      
        //threshold(channels[2],dst,0,255,THRESH_OTSU);
        return 0;
 }
@@ -18,9 +19,12 @@ int ImgPreProcess_DEBUG(Mat &img,Mat &dst)
 int ImgPreProcess_ARMER(Mat &img,Mat &dst)
 {
        vector<Mat> channels;
+       Mat threash;
        split(img,channels);//分离通道
-       Mat blueImg=channels.at(0)-channels.at(2);//装甲板颜色为蓝色，用蓝色减去红色可以获得最好的效果
-       threshold(blueImg,dst, 100, 255, THRESH_BINARY);
+       Mat blueImg=channels.at(0)-channels.at(2);
+       threshold(blueImg,dst, 80, 255, THRESH_BINARY);
+       //Mat element = getStructuringElement(MORPH_RECT, Size(4,4));
+       //dilate(threash, dst, element);
        //threshold(blueImg,dst,0,255,THRESH_OTSU);
        return 0;
 }
@@ -29,9 +33,8 @@ int ImgPreProcess_ENERGY(Mat &img,Mat &dst)
 {
        vector<Mat> channels;
        split(img,channels);//分离通道
-       Mat greenImg=channels.at(1)-channels.at(2);//能量块为绿色
-       threshold(greenImg,dst, 100, 255, THRESH_BINARY)
-       //threshold(greenImg,dst,0,255,THRESH_OTSU);
+       Mat greenImg=channels.at(1)-channels.at(2);
+       threshold(greenImg,dst,0,255,THRESH_OTSU);
        return 0;
 }
 #if 0

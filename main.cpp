@@ -68,7 +68,7 @@ void send_thread(int fd,Point2f &point_angle)//发送数据给下位机的线程
 	}
 }
 
-Point2d angle_solver(Point2f &P_oc)
+Point2d angle_solver(Point2f &P_oc)//计算角度
 {
 	static double cx=cameraMatrix.at<double>(0,2);
 	static double cy=cameraMatrix.at<double>(1,2);

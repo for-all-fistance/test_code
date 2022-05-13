@@ -3,6 +3,7 @@
 //#include <opencv2/imgproc.hpp>
 #include "opencv2/video/tracking.hpp"
 #include "opencv2/calib3d/calib3d.hpp"
+#include "/home/pi/Desktop/xbotcon/include/head.h"
 #include <iostream>
 using namespace std;
 using namespace cv;
@@ -16,7 +17,7 @@ const Mat cameraMatrix = (Mat_<double>(3, 3) <<  987.8162802728854, 0, 515.71962
 const Mat distCoeff = (Mat_<double>(1, 5) <<  0.2181693038172464, -0.5750471376539981, -0.00785331353651738, 0.0046813462975, 0.3820630120717159 );//内参：畸变矩阵
 
 
-Point2f kalman_filter(vector<Point2f> rect)
+void kalman_filter(vector<armer> &armers)
 {
 	KF.transitionMatrix = (Mat_<float>(4,4) <<1,0,1,0,
 										 0,1,0,1,
@@ -33,17 +34,17 @@ Point2f kalman_filter(vector<Point2f> rect)
 		//measurement.at<float>(1) = ite->y;
 		//measurement.at<float>(2)=ite->x-(ite-1)->x;
 		//measurement.at<float>(3)=ite->y-(ite-1)->y;
-		undistortPoints(rect,rect,cameraMatrix,distCoeff);
-		int size=rect.size()-1;
-		measurement.at<float>(0) = rect[size].x;
-		measurement.at<float>(1) = rect[size].y;
-		measurement.at<float>(2)=rect[size].x-rect[size-1].x;
-		measurement.at<float>(3)=rect[size].y-rect[size-1].y;
+		//undistortPoints(rect,rect,cameraMatrix,distCoeff);
+		int size=armers.size()-1;
+		measurement.at<float>(0) = armers[size].armer_center.x;
+		measurement.at<float>(1) = armers[size].armer_center.y;
+		measurement.at<float>(2)=armers[size].armer_center.x-armers[size-1].armer_center.x;
+		measurement.at<float>(3)=armers[size].armer_center.y-armers[size-1].armer_center.y;
 		//update
 		KF.correct(measurement);
 		//kalman prediction
 		KF.predict();
+		armers.back().point_pre=Point2f(KF.statePre.at<float>(0),KF.statePre.at<float>(1));
 		cout<<"预测下一帧装甲板位于：["<<KF.statePre.at<float>(0)<<","<<KF.statePre.at<float>(1)<<"]"<<endl;
-		
-		return Point2f(KF.statePre.at<float>(0),KF.statePre.at<float>(1));
+
 }
