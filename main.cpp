@@ -14,10 +14,8 @@
 #include <stdio.h>
 #include <cmath>
 #include "platform/inc/vl53l0x_types.h"
-#if 1
 #include <ctime>//测试用
 #include <iostream>
-#endif
 using namespace cv;
 using namespace std;
 
