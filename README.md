@@ -70,7 +70,7 @@ cmake .&& make -j4
 
 ## 四.程序时序流程图
 
-![流程图]()
+![流程图](https://raw.githubusercontent.com/for-all-fistance/test_code/master/%E5%9B%BE%E7%89%87%E5%8F%8A%E8%A7%86%E9%A2%91/%E6%97%B6%E5%BA%8F%E5%9B%BE.png)
 
 # 五.主要代码原理：
 
@@ -102,7 +102,7 @@ cmake .&& make -j4
     
     使用OpenCV中的solvepnp（）通过装甲板的四个角点解算旋转向量rvecs，经过rodrigues变换获得旋转矩阵，根据以下公式可以算出三维点坐标信息。得到距离后由简单的物理知识可以得到重力引起的误差。
     
-    ![公式]()
+    ![公式1](https://raw.githubusercontent.com/for-all-fistance/test_code/master/%E5%9B%BE%E7%89%87%E5%8F%8A%E8%A7%86%E9%A2%91/%E5%85%AC%E5%BC%8F1.png)
     
 - 角度计算
     
