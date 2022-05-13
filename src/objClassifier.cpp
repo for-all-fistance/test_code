@@ -3,19 +3,18 @@
 #include <opencv2/imgproc.hpp>
 #include <vector>
 #include <iostream>
-#include "/home/pi/Desktop/xbotcon/include/DEBUG.h"
+#include "/home/pi/Desktop/xbotcon/include/head.h"
 using namespace std;
 using namespace cv;
 
 const float MINAREARATE_ARMER=0.95;//最小外接矩形与轮廓的面积比值在一定范围内
 const float MAXAREARATE_ARMER=1.5;
-const float MINLENTHRATE_ARMER=2.5;//长宽比大于一定值
-const float MAXLENTHRATE_ARMER=4;//长宽比小于一定值
+const float MINLENTHRATE_ARMER=4;//长宽比大于一定值
+const float MAXLENTHRATE_ARMER=7;//长宽比小于一定值
 const float MINSOLIDITY_ARMER=0.9;//轮廓的凸度(Solidity)大于一定值
 const float MAXSOLIDITY_ARMER=1.1;
 
-const float MAX_DISTANCE_RATE_ERROR=4;//灯条中心点连线与灯条长度的比值误差最大值
-const float MIN_DISTANCE_RATE_ERROR=1.5;//灯条中心点连线与灯条长度的比值误差最小值
+const float MAX_ANGLE_ERROR=15;//灯条仰角误差最大值
 
 const float MINAREARATE_ENERGY=2;
 const float MAXAREARATE_ENERGY=2;
@@ -23,22 +22,52 @@ const float MINLENTHRATE_ENERGY=1.5;
 const float MINSOLIDITY_ENERGY=1;
 const float MAXSOLIDITY_ENERGY=1;
 
-inline float distance_calc(RotatedRect a,RotatedRect b)
+int pair_armer(vector<armer>& armers,int count,armer &this_armer)
 {
-    float x1=a.center.x;
-    float y1=a.center.y;
-    float x2=b.center.x;
-    float y2=b.center.y;
-    return(sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)));
+    vector<RotatedRect>::iterator target=this_armer.armer_light.end();
+    vector<vector<int>> all_pos;
+    vector<float> all_error;
+    bool  paired=false;
+    int i_small=0;
+    int j_small=0;
+    int error_small=888;
+    for(int i=1;i<count;++i)
+    {
+        for(int j=i+1;j<count+1;++j)
+            {
+                float error=abs((target-i)->angle-(target-j)->angle);
+                //cout<<"error:"<<error<<endl;
+                if(error<MAX_ANGLE_ERROR)
+                {
+                    if(error_small>error)
+                    {
+                        error_small=error;
+                        i_small=i;
+                        j_small=j;
+                    }
+                    paired=true;
+                }
+            }
+    }
+    if(paired)
+        {
+            Rect2f r1=(*(target-i_small)).boundingRect();
+            Rect2f r2=(*(target-j_small)).boundingRect();
+            Rect2f all_rect=r1|r2;//两个矩形的并集就是整个装甲板的区域
+            this_armer.armer_rect=all_rect;
+            armers.push_back(this_armer);
+            return 1;
+        }
+    return 0;
 }
-
-int sort_energy(vector<RotatedRect> &energy_rect,int count);
-int armerClassifier(Mat &img,Mat origin,vector<RotatedRect> &armer_rect,vector<Point2f> &armer_center)
+int armerClassifier(Mat &img,vector<armer> &armers)
 {
     vector<Vec4i> hierarchy;//储存边界的拓扑信息，如前一个轮廓，后一个轮廓，父轮廓等
     vector<vector<Point>> contours;//储存边界信息,不能使用point2f类型，contours都是point(int)类型
     findContours(img, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_NONE);//寻找边界
     int count=0;
+    //cout<<"size:"<<contours.size()<<endl;
+    armer temp;
     for(int i=0;i<contours.size();++i)
     {
         float area=contourArea(contours[i]);
@@ -46,17 +75,18 @@ int armerClassifier(Mat &img,Mat origin,vector<RotatedRect> &armer_rect,vector<P
         if(area>20&&area<250000/*去除整个图片的边框！*/)
         {
             RotatedRect minAreaRect_armer=minAreaRect(contours[i]);
+            //cout<<"angle:"<<minAreaRect_armer.angle<<endl;
             float areaRate=minAreaRect_armer.size.area()/area;//最小外接矩形与轮廓的面积比值
             //cout<<"arearate:"<<areaRate<<endl;
             if(areaRate>MINAREARATE_ARMER&&areaRate<MAXAREARATE_ARMER)
             {
-                float height=minAreaRect_armer.size.height;
-                float width=minAreaRect_armer.size.width;
-                if(height<=width)
-                    swap(height,width);
-                float lenthRate=height/width;//矩形长宽比1
+                temp.height=minAreaRect_armer.size.height;
+                temp.width=minAreaRect_armer.size.width;
+                if(temp.height<=temp.width)
+                    swap(temp.height,temp.width);
+                float lenthRate=temp.height/temp.width;//矩形长宽比1
                 //cout<<"lenthRate:"<<lenthRate<<endl;
-                if(lenthRate>MINLENTHRATE_ARMER&&lenthRate>MAXLENTHRATE_ARMER)
+                if(lenthRate>MINLENTHRATE_ARMER&&lenthRate<MAXLENTHRATE_ARMER)
                 {
                     vector<vector<Point>> HullPoints(contours.size());
                     convexHull(Mat(contours[i]),HullPoints[i],false);//寻找凸包
@@ -64,27 +94,43 @@ int armerClassifier(Mat &img,Mat origin,vector<RotatedRect> &armer_rect,vector<P
                     //cout<<"solidity:"<<solidity<<endl;
                     if(solidity>MINSOLIDITY_ARMER)
                     {
-                        armer_rect.push_back(minAreaRect_armer);
-                        count++;
-                        if(count>1)
-                        {
-                            for(int j=2;j<=3;++j)
-                            {
-                                float error=distance_calc(armer_rect.back(),armer_rect[armer_rect.size()-j])/height;
-                                //cout<<"error:"<<error<<endl;
-                                if(error<MAX_DISTANCE_RATE_ERROR&&error>MIN_DISTANCE_RATE_ERROR)
-                                {
-                                    armer_center.push_back((armer_rect[armer_rect.size()-1].center+armer_rect[armer_rect.size()-j].center)/2);//获取图形的中心，近似等于两个灯条中心连线的中点
-                                    circle(img,armer_center.back(),5,Scalar(255,255,255),FILLED);
-                                    imshow("img",img);
-                                    return 1;
-                                }
-                            }
-                        }
+                        temp.armer_light.push_back(minAreaRect_armer);
+                        ++count;
                     }
                 }
             }
         }
+    }
+    //cout<<"count"<<count<<endl;
+    if(count>1)
+    {
+        return pair_armer(armers,count,temp);
+    }
+    return 0;
+}
+
+#if DEBUG
+#include <cmath>
+#include <iostream>
+
+
+int sort_energy(vector<RotatedRect> &energy_rect,int count)
+{
+    vector<RotatedRect>::iterator target;
+    for(int i=1;i<=count;++i)
+    {
+        for(int j=1;j<=count;)
+            {
+                target=energy_rect.end();
+                if((target-i)->center.y<=(target-j)->center.y)
+                {
+                    if(j==count)
+                        return i;
+                    ++j;
+                }
+                else
+                        break;
+            }
     }
     return 0;
 }
@@ -130,32 +176,10 @@ int energyClassifier(Mat &img,Mat origin,vector<RotatedRect> &energy_rect)
     return 0;
 }
 
-int sort_energy(vector<RotatedRect> &energy_rect,int count)
-{
-    vector<RotatedRect>::iterator target;
-    for(int i=1;i<=count;++i)
-    {
-        for(int j=1;j<=count;)
-            {
-                target=energy_rect.end();
-                if((target-i)->center.y<=(target-j)->center.y)
-                {
-                    if(j==count)
-                        return i;
-                    ++j;
-                }
-                else
-                        break;
-            }
-    }
-    return 0;
-}
 
-#if DEBUG
-#include <cmath>
-#include <iostream>
-int armerClassifier(Mat &img,Mat origin,vector<RotatedRect> &armer_rect,vector<Point2f> &armer_center)
+int armerClassifier(Mat &img,Mat origin,vector<Point2f> &armer_center)
 {
+    vector<RotatedRect> armer_rect;
     vector<Vec4i> hierarchy;//储存边界的拓扑信息，如前一个轮廓，后一个轮廓，父轮廓等
     vector<vector<Point>> contours;//储存边界信息,不能使用point2f类型，contours都是point(int)类型
     findContours(img, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_NONE);//寻找边界
