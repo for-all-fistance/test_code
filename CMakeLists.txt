@@ -8,8 +8,8 @@ set(Eigen3_DIR "/home/pi/Downloads/eigen-3.4.0/cmake")
 add_definitions( -lwiringPi  )
 find_library(WIRINGPI_LIBRARIES NAMES wiringPi)
 #find_library(libVL53L0X_Rasp.a ./)
-#message("WARNING" "OpenCV_INCLUDE_DIRS:" ${OpenCV_INCLUDE_DIRS})
-#message("WARNING" "OpenCV_LIBS:" ${OpenCV_LIBS})
+message("WARNING" "OpenCV_INCLUDE_DIRS:" ${OpenCV_INCLUDE_DIRS})
+message("WARNING" "OpenCV_LIBS:" ${OpenCV_LIBS})
 add_executable(${PROJECT_NAME}
     "main.cpp"
     "src/distancedetection.cpp"
@@ -18,8 +18,6 @@ add_executable(${PROJECT_NAME}
     "src/objClassifier.cpp"
     "src/getTarget2dPosition.cpp"
     "src/color_picker.cpp"
-    "src/position_adjust.cpp"
-	"src/serial_connection.cpp"
 )
 
 find_package(OpenCV 4 REQUIRED)
