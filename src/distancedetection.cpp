@@ -43,7 +43,7 @@ float distancedetection_armer(vector<Point2f> &refer_imgPoint)
 	cv2eigen(tvecs, T_n);
 	Eigen::Vector3f P_oc;
 	P_oc = -R_n.inverse()*T_n;
-	cout<<"当前3D位姿坐标为："<<"["<<P_oc<<"]"<<endl;
+	//cout<<"当前3D位姿坐标为："<<"["<<P_oc<<"]"<<endl;
 	return(P_oc.z()*0.0001);//m
 }
 

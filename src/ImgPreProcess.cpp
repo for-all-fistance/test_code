@@ -22,10 +22,10 @@ int ImgPreProcess_ARMER(Mat &img,Mat &dst)
        Mat threash;
        split(img,channels);//分离通道
        Mat blueImg=channels.at(0)-channels.at(2);
-       threshold(blueImg,dst, 80, 255, THRESH_BINARY);
+       //threshold(blueImg,dst, 80, 255, THRESH_BINARY);
        //Mat element = getStructuringElement(MORPH_RECT, Size(4,4));
        //dilate(threash, dst, element);
-       //threshold(blueImg,dst,0,255,THRESH_OTSU);
+       threshold(blueImg,dst,0,255,THRESH_OTSU);
        return 0;
 }
 
