@@ -10,18 +10,10 @@
 #include <cmath>
 #include <iostream>
 #include <ctime>//测试用
-#include "/home/pi/Desktop/xbotcon/include/head.h"
+#include "params.h"
+#include "head.h"
 using namespace cv;
 using namespace std;
-
-
-
-const float SPEED_BULLET =1;//m/s
-const float REAL_HEIGHT_ARMER=0.07;//7cm
-const Mat cameraMatrix = (Mat_<double>(3, 3) <<  987.8162802728854, 0, 515.7196277867043,
- 0, 999.9341934371877, 383.1530462255868,
- 0, 0, 1);//外参
-const Mat distCoeff = (Mat_<double>(1, 5) <<  0.2181693038172464, -0.5750471376539981, -0.00785331353651738, 0.0046813462975, 0.3820630120717159 );//内参：畸变矩阵
 const double PI = 3.141592653;
 
 
@@ -76,7 +68,7 @@ float distancedetection_energy(vector<Point2f> refer_imgPoint)
 	cv2eigen(tvecs, T_n);
 	Eigen::Vector3f P_oc;
 	P_oc = -R_n.inverse()*T_n;
-	cout<<"当前3D位姿坐标为："<<"["<<P_oc<<"]"<<endl;
+	//cout<<"当前3D位姿坐标为："<<"["<<P_oc<<"]"<<endl;
 	return(P_oc.z());
 }
 

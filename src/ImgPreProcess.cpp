@@ -2,8 +2,8 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
-#include "/home/pi/Desktop/xbotcon/include/DEBUG.h"
-#include "/home/pi/Desktop/xbotcon/include/head.h"
+#include "DEBUG.h"
+//#include "/home/pi/Desktop/xbotcon/include/head.h"
 using namespace cv;
 using namespace std;
 
@@ -11,7 +11,7 @@ int ImgPreProcess_DEBUG(Mat &img,Mat &dst)
 {
        vector<Mat> channels;
        split(img,channels);//分离通道
-       threshold(channels[0],dst, 80, 255, THRESH_BINARY);      
+       threshold(channels[0],dst, 60, 255, THRESH_BINARY);      
        //threshold(channels[2],dst,0,255,THRESH_OTSU);
        return 0;
 }
@@ -22,7 +22,7 @@ int ImgPreProcess_ARMER(Mat &img,Mat &dst)
        Mat threash;
        split(img,channels);//分离通道
        Mat blueImg=channels.at(0)-channels.at(2);
-       //threshold(blueImg,dst, 80, 255, THRESH_BINARY);
+       //threshold(blueImg,dst, 60, 255, THRESH_BINARY);
        //Mat element = getStructuringElement(MORPH_RECT, Size(4,4));
        //dilate(threash, dst, element);
        threshold(blueImg,dst,0,255,THRESH_OTSU);

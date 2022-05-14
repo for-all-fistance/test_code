@@ -9,64 +9,26 @@
 #include <mutex>
 #include <condition_variable>
 #include "include/head.h"
+#include "include/params.h"
 #include "include/DEBUG.h"
+#include "include/threads.h"
 #include <vector>
 #include <stdio.h>
 #include <cmath>
-#include "platform/inc/vl53l0x_types.h"
 #include <ctime>//测试用
 #include <iostream>
 using namespace cv;
 using namespace std;
 
-
-//VideoCapture cap("/home/pi/Desktop/xbotcon/armer test.avi");
-VideoCapture cap(0);
-const int imageWidth = 640; //定义图片大小，即摄像头的分辨率
-const int imageHeight = 480;
-bool success =false;
-const Mat cameraMatrix = (Mat_<double>(3, 3) <<  611.6348658352435, 0, 317.0063484473284,
-0, 618.2053424684727, 238.8843698515634,
- 0, 0, 1);//外参
-const Mat distCoeff = (Mat_<double>(1, 5) << 0.1252247200301222, 0.3344879529935187, 0.004913024896752389, -0.004298159448975511, -2.743281072337644 );//内参：畸变矩阵
 mutex mutex_fd;
 mutex mutex_send;
+mutex mutex_cap;
+mutex mutex_img;
+mutex mutex_stand_by;
 condition_variable cv_send;
-void get_thread(char& command,int fd)
-{
-	while(true)
-	{
-		unique_lock<mutex> lock_fd(mutex_fd);
-		if(serialDataAvail(fd) >= 1)    //如果串口缓存中有数据
-		{
-			command=serialGetchar(fd);
-			cout<<"get command"<<command<<endl;
-			serialFlush(fd); //avoid  repeat reception
-		}
-		lock_fd.unlock();
-		this_thread::sleep_for(std::chrono::milliseconds(50));
-	}
-}
-void send_thread(int fd,Point2f &point_angle)
-{
-	char *message;
-	while(true)
-	{
-		unique_lock <mutex> lock(mutex_send);
-		cv_send.wait(lock);
-		unique_lock<mutex> lock_fd(mutex_fd);
-		message=new char[5];
-		snprintf(message,5,"%d",int(point_angle.x*10000));
-		serialPuts(fd,"x");  
-		serialPuts(fd,message);  
-		serialPuts(fd,"@");  
-		snprintf(message,5,"%d",int(point_angle.y*10000));
-		serialPuts(fd,"y");  
-		serialPuts(fd,message); 
-		serialPuts(fd,"@");   
-		delete message;
-	}
-}
+condition_variable cv_cap;
+bool stop=false;
+
 
 Point2d angle_solver(Point2f &P_oc)
 {
@@ -78,42 +40,39 @@ Point2d angle_solver(Point2f &P_oc)
     double ry=(P_oc.y-cy)/fy;
     return(Point2f(atan(rx)/CV_PI*180,atan(ry)/CV_PI*180));
 }
+
 ///////////////////////////////////////////////////////////////////
 int main() 
 {
-	cap.set(CAP_PROP_FOURCC, VideoWriter::fourcc('M', 'J', 'P', 'G'));
 	Mat img;
 	Size imageSize = Size(imageWidth, imageHeight);
 	vector<RotatedRect> energy_rect;
 	vector< vector<Point2f>> energy_refer_imgPoint;//对应的能量条2D图像点
 	Point2f point_angle;
+	///////////test//////////
+	double time_all=0;
+	int frame=0;
+	//////////test//////////
+	char command='~';
+	bool success =false;
 	vector<armer> armers;
 	armer init_armer {Point2f(320,240),{},0,0,{},Rect(),{},{},Point2f(0,0),Point2f(0,0),Point2f(0,0)};
 	armers.push_back(init_armer);
-	char command='~';
-	//cout<<wiringPiSetup()<<endl;
-	if(-1==wiringPiSetup())
-		{
-			cout<<"serial error"<<endl;
-			return -1;
-		}
-	int fd =serialOpen("/dev/ttyAMA0",115200);   //这里波特率设置为115200
+	int fd=serial_init();
 	if(fd==-1)
-		{
-			cout<<"serial open error"<<endl;
-			return -1;
-		}
-	thread get_th=thread(get_thread,std::ref(command),fd);
-	thread send_th=thread(send_thread,fd,std::ref(point_angle));
-	while (true)
+		return -1;
+	thread get_th=thread(get_thread,std::ref(command),fd,std::ref(stop));
+	thread send_th=thread(send_thread,fd,std::ref(point_angle),std::ref(stop));
+	thread cap_th=thread(cap_thread,std::ref(img),std::ref(stop));
+	waitKey(1000);
+	while (frame<100)
 	{
-		
-		cap >> img;
-		clock_t startTime = clock();//test
+		//cap >> img;
+		clock_t startTime = clock();
 		if(img.empty())
 			{
 				cout<<"no img ,error"<<endl;
-				break;
+				return -1;
 			}
 		if(command=='~')
 		{
@@ -122,22 +81,31 @@ int main()
 		}
 		else if(command=='%')
 		{
+			
+			unique_lock <mutex> lock_cap(mutex_cap);
+			cv_cap.wait(lock_cap);
 			Mat dst;
-			clock_t startTime1 = clock();
 			//if(success)
 				//{
 					//SetROI(img,armer_real_position.back());
 					//imshow("ROI",img);
 				//}
+			unique_lock <mutex> lock_img(mutex_img);
 			ImgPreProcess_ARMER(img,dst);
+			lock_img.unlock();
+			clock_t startTime1 = clock();
 			success=armerClassifier(dst,armers);
+			clock_t endTime1 = clock();
+			cout << "classify用时："  << double(endTime1 - startTime1) / CLOCKS_PER_SEC << "s" << endl;
 			if(success)
 			{
 				getTarget2dPosition(armers,Point2f(0,0));
 				undistortPoints(armers.back().armer_refer_imgPoint,armers.back().armer_refer_imgPoint,cameraMatrix,distCoeff,noArray(),cameraMatrix);
 				armers.back().armer_center=(armers.back().armer_refer_imgPoint[1]+armers.back().armer_refer_imgPoint[3])/2.0;
+				circle(img,armers.back().armer_center,5,Scalar(120,200,0),FILLED);
 				gravity_offset_composite(armers);
 				kalman_filter(armers);
+				circle(img,armers.back().point_pre,5,Scalar(120,200,0),FILLED);
 				unique_lock <mutex> lock(mutex_send);
 				point_angle=angle_solver(armers.back().armer_center);
 				cv_send.notify_one();
@@ -160,14 +128,24 @@ int main()
 			}
 		}
 		#endif
+		clock_t endTime = clock();
+		double this_time=double(endTime - startTime) / CLOCKS_PER_SEC;
+		time_all+=this_time;
+		++frame;
+		cout << "该帧用时：" << this_time << "s" << endl;
 		//imshow("img",img);
 		//waitKey(1);
-		clock_t endTime = clock();
-		cout << "该帧用时：" << double(endTime - startTime) / CLOCKS_PER_SEC << "s" << endl;
 	}
+	stop=true;
+	mutex_send.unlock();
+	mutex_fd.unlock();
+	mutex_img.unlock();
+	cv_send.notify_all();
 	get_th.join();
 	send_th.join();
+	cap_th.join();
 	serialClose(fd);
+	cout<<"该次运行平均时间:"<<time_all/double(frame)<<endl;
 	return 0;
 }
 
