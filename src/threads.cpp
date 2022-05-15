@@ -33,20 +33,6 @@ int get_thread(char& command,int fd,bool &stop)
 	return 0;
 }
 
-string string_to_hex(const string& str) //transfer string to hex-string
-{
-    string result="0x";
-    string tmp;
-    stringstream ss;
-    for(int i=0;i<str.size();i++)
-    {
-        ss<<hex<<int(str[i])<<endl;
-        ss>>tmp;
-        result+=tmp;
-    }
-    return result;
-}
-
 int send_thread(int fd,Point2f &point_angle,bool &stop)
 {
 	string pnt_int;
@@ -78,9 +64,7 @@ int send_thread(int fd,Point2f &point_angle,bool &stop)
 		ssy >> pnt_int;
 		message += pnt_int;
 		message.push_back('@');
-		string temp;
-		temp=string_to_hex(message);
-		serialPuts(fd,temp.c_str());
+		serialPuts(fd,message.c_str());
 	}
 	return 0;
 }
