@@ -28,6 +28,7 @@ int ImgPreProcess_ARMER(Mat &img,Mat &dst);
 int ImgPreProcess_ENERGY(Mat &img,Mat &dst);
 void SetROI(Mat& img,const vector<armer> armers);
 void kalman_filter(vector<armer> &armers);
+void kalman_filter_static(vector<armer> &armers);
 int armerClassifier(Mat &img,vector<armer>&);
 int energyClassifier(Mat &img,Mat origin,vector<armer> armers);
 int position_adjust(Point2f &);

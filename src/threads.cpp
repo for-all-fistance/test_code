@@ -33,25 +33,54 @@ int get_thread(char& command,int fd,bool &stop)
 	return 0;
 }
 
+string string_to_hex(const string& str) //transfer string to hex-string
+{
+    string result="0x";
+    string tmp;
+    stringstream ss;
+    for(int i=0;i<str.size();i++)
+    {
+        ss<<hex<<int(str[i])<<endl;
+        ss>>tmp;
+        result+=tmp;
+    }
+    return result;
+}
+
 int send_thread(int fd,Point2f &point_angle,bool &stop)
 {
-	char *message;
+	string pnt_int;
 	while(stop!=true)
 	{
+		string message;
+		stringstream ssx;
+		stringstream ssy;
+		string str_container;
 		unique_lock <mutex> lock(mutex_send);
 		cv_send.wait(lock);
 		unique_lock<mutex> lock_fd(mutex_fd);
 		//cout<<"angle:"<<point_angle<<endl;
-		message=new char[5];
-		snprintf(message,5,"%d",int(point_angle.x*10000));
-		serialPuts(fd,"x");  
-		serialPuts(fd,message);  
-		serialPuts(fd,"@"); 
-		snprintf(message,5,"%d",int(point_angle.y*10000));
-		serialPuts(fd,"y");  
-		serialPuts(fd,message); 
-		serialPuts(fd,"@"); 
-		delete message;
+		message.push_back('x');
+		if (point_angle.x < 0)
+			message.push_back('-');
+		else
+			message.push_back('+');
+		ssx << setw(2) << setfill('0') << int(abs(point_angle.x));
+		ssx >> pnt_int;
+		message += pnt_int;
+		message.push_back('@');
+		message.push_back('y');
+		if (point_angle.y < 0)
+			message.push_back('-');
+		else
+			message.push_back('+');
+		ssy << setw(2) << setfill('0') << int(abs(point_angle.y));
+		ssy >> pnt_int;
+		message += pnt_int;
+		message.push_back('@');
+		string temp;
+		temp=string_to_hex(message);
+		serialPuts(fd,temp.c_str());
 	}
 	return 0;
 }

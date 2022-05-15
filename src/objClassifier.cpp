@@ -61,7 +61,7 @@ int armerClassifier(Mat &img,vector<armer> &armers)
 {
     vector<Vec4i> hierarchy;//储存边界的拓扑信息，如前一个轮廓，后一个轮廓，父轮廓等
     vector<vector<Point>> contours;//储存边界信息,不能使用point2f类型，contours都是point(int)类型
-    findContours(img, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_NONE);//寻找边界
+    findContours(img, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);//寻找边界
     int count=0;
     //cout<<"size:"<<contours.size()<<endl;
     armer temp;
@@ -81,7 +81,7 @@ int armerClassifier(Mat &img,vector<armer> &armers)
                 temp.width=minAreaRect_armer.size.width;
                 if(temp.height<=temp.width)
                     swap(temp.height,temp.width);
-                float lenthRate=temp.height/temp.width;//矩形长宽比1
+                float lenthRate=temp.height/temp.width;//矩形长宽比
                 //cout<<"lenthRate:"<<lenthRate<<endl;
                 if(lenthRate>MINLENTHRATE_ARMER&&lenthRate<MAXLENTHRATE_ARMER)
                 {

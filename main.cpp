@@ -65,9 +65,9 @@ int main()
 	thread send_th=thread(send_thread,fd,std::ref(point_angle),std::ref(stop));
 	thread cap_th=thread(cap_thread,std::ref(img),std::ref(stop));
 	waitKey(1000);
-	while (frame<100)
+	while (frame<1000)
 	{
-		//cap >> img;
+		cout<<"command:"<<command<<endl;
 		clock_t startTime = clock();
 		if(img.empty())
 			{
@@ -81,7 +81,7 @@ int main()
 		}
 		else if(command=='%')
 		{
-			
+			++armer_count;
 			unique_lock <mutex> lock_cap(mutex_cap);
 			cv_cap.wait(lock_cap);
 			Mat dst;
@@ -90,6 +90,34 @@ int main()
 					//SetROI(img,armer_real_position.back());
 					//imshow("ROI",img);
 				//}
+			unique_lock <mutex> lock_img(mutex_img);
+			ImgPreProcess_ARMER(img,dst);
+			lock_img.unlock();
+			success=armerClassifier(dst,armers);
+			if(success)
+			{
+				getTarget2dPosition(armers,Point2f(0,0));
+				undistortPoints(armers.back().armer_refer_imgPoint,armers.back().armer_refer_imgPoint,cameraMatrix,distCoeff,noArray(),cameraMatrix);
+				armers.back().armer_center=(armers.back().armer_refer_imgPoint[1]+armers.back().armer_refer_imgPoint[3])/2.0;
+				circle(dst,armers.back().armer_center,5,Scalar(120,200,0),FILLED);
+				gravity_offset_composite(armers);
+				kalman_filter(armers);
+				unique_lock <mutex> lock(mutex_send);
+				point_angle=angle_solver(armers.back().armer_center);
+				cv_send.notify_one();
+			}
+			else
+			{
+				lock_guard<mutex> lock_fd(mutex_fd);
+				serialPutchar(fd,'N');
+			}
+		}
+		#if 0
+		else if(command=='&')//static object
+		{
+			unique_lock <mutex> lock_cap(mutex_cap);
+			cv_cap.wait(lock_cap);
+			Mat dst;
 			unique_lock <mutex> lock_img(mutex_img);
 			ImgPreProcess_ARMER(img,dst);
 			lock_img.unlock();
@@ -102,7 +130,7 @@ int main()
 				getTarget2dPosition(armers,Point2f(0,0));
 				undistortPoints(armers.back().armer_refer_imgPoint,armers.back().armer_refer_imgPoint,cameraMatrix,distCoeff,noArray(),cameraMatrix);
 				armers.back().armer_center=(armers.back().armer_refer_imgPoint[1]+armers.back().armer_refer_imgPoint[3])/2.0;
-				circle(img,armers.back().armer_center,5,Scalar(120,200,0),FILLED);
+				//circle(img,armers.back().armer_center,5,Scalar(120,200,0),FILLED);
 				gravity_offset_composite(armers);
 				kalman_filter(armers);
 				circle(img,armers.back().point_pre,5,Scalar(120,200,0),FILLED);
@@ -110,31 +138,17 @@ int main()
 				point_angle=angle_solver(armers.back().armer_center);
 				cv_send.notify_one();
 			}
-		}
-		#if 0
-		else if(command=='&')
-		{
-			Mat dst;
-			ImgPreProcess_ENERGY(img,dst);
-			bool success=energyClassifier(dst,img,energy_rect);
-			if(success)
-			{
-				getTarget2dPosition(energy_rect.back(),energy_refer_imgPoint,Point2f(0,0));
-				distancedetection_energy(energy_refer_imgPoint.back());
-				vector<Point2f> target_center={energy_rect.back().center};
-				undistortPoints(target_center,target_center,cameraMatrix,distCoeff);
-				point_angle=angle_solver(target_center.at(0));
-				cv_send.notify_one();
-			}
+			else
+				serialPutchar(fd,'N');
 		}
 		#endif
+		else
+		{
+			cout<<"command error"<<endl;
+			return -1;
+		}
 		clock_t endTime = clock();
-		double this_time=double(endTime - startTime) / CLOCKS_PER_SEC;
-		time_all+=this_time;
-		++frame;
 		cout << "该帧用时：" << this_time << "s" << endl;
-		//imshow("img",img);
-		//waitKey(1);
 	}
 	stop=true;
 	mutex_send.unlock();
@@ -145,7 +159,6 @@ int main()
 	send_th.join();
 	cap_th.join();
 	serialClose(fd);
-	cout<<"该次运行平均时间:"<<time_all/double(frame)<<endl;
 	return 0;
 }
 

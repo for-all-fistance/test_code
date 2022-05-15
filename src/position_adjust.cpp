@@ -2,7 +2,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <iostream>
-#include <head.h>
+#include </home/pi/Desktop/xbotcon/include/head.h>
 using namespace std;
 using namespace cv;
 

@@ -3,7 +3,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
 #include "DEBUG.h"
-//#include "/home/pi/Desktop/xbotcon/include/head.h"
+#include "params.h"
 using namespace cv;
 using namespace std;
 
@@ -22,10 +22,10 @@ int ImgPreProcess_ARMER(Mat &img,Mat &dst)
        Mat threash;
        split(img,channels);//分离通道
        Mat blueImg=channels.at(0)-channels.at(2);
-       //threshold(blueImg,dst, 60, 255, THRESH_BINARY);
-       //Mat element = getStructuringElement(MORPH_RECT, Size(4,4));
-       //dilate(threash, dst, element);
-       threshold(blueImg,dst,0,255,THRESH_OTSU);
+       //threshold(blueImg,threash,0,255,THRESH_OTSU);
+       threshold(blueImg,threash, threash_num, 255, THRESH_BINARY);
+       Mat element = getStructuringElement(MORPH_RECT, Size(3,3));
+       dilate(threash, dst, element);
        return 0;
 }
 

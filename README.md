@@ -15,16 +15,18 @@
 
 可以通过git clone 命令或者在PC上下载源码之后发送至树莓派。
 
+### 2.更改文件路径
+
+将CMakeLists.txt中的文件路径替换为当前环境对应的路径
+
 ### 3.标定相机
 
-使用calibration.cpp中的代码，标定相机并更改代码。
+使用calibration.cpp中的代码，标定相机并更改代码，根据实际情况调整params.h中的各项参数。
 
-### 2.编译运行
+### 4.编译运行
 
 ```cpp
 //在文件目录下输入下列命令
-mkdir build
-cd build
 cmake .&& make -j4
 ./XBOTCON
 ```
@@ -35,42 +37,50 @@ cmake .&& make -j4
 .
 ├── 图片及视频
 │   ├── 公式1.png
-│   └── 时序图.png
-├── armer test.avi//官方测试视频
+│   ├── 时序图.pdf
+│   ├── 运行速度.png
+│   └── armer test.avi
 ├── calib
-│   ├── calibration_result.txt//相机标定结果
-│   ├── image0.jpg//相机标定用到的图片
-│   ├── image10.jpg
-│   ├── image1.jpg
-│   ├── image2.jpg
-│   ├── image3.jpg
-│   ├── image4.jpg
-│   ├── image6.jpg
-│   ├── image7.jpg
-│   ├── image8.jpg
-│   └── image9.jpg
+│   ├── calibration_result.txt//相机标定结果
+│   ├── image10.jpg//相机标定用到的图片
+│   ├── image1.jpg
+│   ├── image2.jpg
+│   ├── image3.jpg
+│   ├── image4.jpg
+│   ├── image5.jpg
+│   ├── image6.jpg
+│   ├── image7.jpg
+│   ├── image8.jpg
+│   └── image9.jpg
 ├── CMakeLists.txt
 ├── include
-│   ├── DEBUG.h//存放一些DEBUG用宏定义
-│   ├── head.h//主要功能函数头文件和装甲板结构体封装
+│   ├── DEBUG.h//存放一些DEBUG用宏定义
+│   ├── head.h//主要功能函数头文件和装甲板结构体封装
+│   ├── params.h//存放主要参数
+│   ├── serial.h//已弃用
+│   └── threads.h//定义了多线程相关的锁和条件变量
 ├── main.cpp
 ├── platform//传感器API（暂未使用）
-│   ├── inc
-│   └── src
-├── src//源文件
-    ├── calibration.cpp//相机标定，参考https://blog.csdn.net/huangshulang66/article/details/78219363
-    ├── color_picker.cpp//已弃用
-    ├── distancedetection.cpp//测距和重力误差消除
-    ├── getTarget2dPosition.cpp//将识别到的装甲板角点位置按顺序重新排列，便于后续处理
-    ├── ImgPreProcess.cpp//图像预处理
-    ├── kalman_filter.cpp//卡尔曼滤波预测装甲板中心点的位置
-    ├── objClassifier.cpp//识别和筛选图像中的灯条，两两匹配成完整的装甲板并确定最佳的打击目标
-    └── vl53l0x_ContinuousRanging_Example.c//传感器示例，暂未使用
+│   ├── inc
+│   └── src
+├── README.md
+└── src//源文件
+    ├── calibration.cpp//相机标定，参考https://blog.csdn.net/huangshulang66/article/details/78219363
+    ├── color_picker.cpp//已弃用
+    ├── distancedetection.cpp//测距和重力误差消除
+    ├── getTarget2dPosition.cpp//将识别到的装甲板角点位置按顺序重新排列，便于后续处理
+    ├── ImgPreProcess.cpp//图像预处理
+    ├── kalman_filter.cpp//卡尔曼滤波预测装甲板中心点的位置
+    ├── objClassifier.cpp//识别和筛选图像中的灯条，两两匹配成完整的装甲板并确定最佳的打击目标
+    ├── position_adjust.cpp//已弃用
+    ├── serial.cpp//串口通信相关函数定义
+    ├── threads.cpp//子线程函数定义,包括串口发送，接受线程，图像获取线程
+    └── vl53l0x_ContinuousRanging_Example.c//传感器示例，暂未使用
 ```
 
 ## 四.程序时序流程图
 
-![流程图](https://raw.githubusercontent.com/for-all-fistance/test_code/master/%E5%9B%BE%E7%89%87%E5%8F%8A%E8%A7%86%E9%A2%91/%E6%97%B6%E5%BA%8F%E5%9B%BE.png)
+![Untitled](XBOTCON2022%E6%97%A0%E9%99%90%E6%9C%BA%E7%94%B2%E6%9D%AF%E8%A7%86%E8%A7%89%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81%E8%AF%B4%E6%98%8E%20f5225b0b791c4da09ce453d7527d6baa/Untitled.png)
 
 # 五.主要代码原理：
 
@@ -83,7 +93,7 @@ cmake .&& make -j4
     sudo apt install qv4l2
     ```
     
-    2.由于装甲板的颜色为蓝色，故将图像进行通道分离，将蓝色通道减去红色通道得到最好的成像效果
+    2.由于装甲板的颜色为蓝色，故将图像进行通道分离，将蓝色通道减去红色通道得到最好的成像效果。
     3.之后对图像进行阈值化，阈值化准备有两套方案，手动设定阈值和自适应阈值化，手动调参鲁棒性较差，而OTSU法自适应阈值化在背景光比较强时分割效果很差，且增加了时间开销，需要根据具体情况考虑选择哪种方案。
     
 - 装甲板检测与筛选：
@@ -100,9 +110,13 @@ cmake .&& make -j4
     
 - pnp测距和重力误差消除：
     
-    使用OpenCV中的solvepnp（）通过装甲板的四个角点解算旋转向量rvecs，经过rodrigues变换获得旋转矩阵，根据以下公式可以算出三维点坐标信息。得到距离后由简单的物理知识可以得到重力引起的误差。
+    使用OpenCV中的solvepnp（）通过装甲板的四个角点解算旋转向量rvecs，经过rodrigues变换获得旋转矩阵，根据以下公式可以算出三维点坐标信息。
     
-    ![公式1](https://raw.githubusercontent.com/for-all-fistance/test_code/master/%E5%9B%BE%E7%89%87%E5%8F%8A%E8%A7%86%E9%A2%91/%E5%85%AC%E5%BC%8F1.png)
+    ![Untitled](XBOTCON2022%E6%97%A0%E9%99%90%E6%9C%BA%E7%94%B2%E6%9D%AF%E8%A7%86%E8%A7%89%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81%E8%AF%B4%E6%98%8E%20f5225b0b791c4da09ce453d7527d6baa/Untitled%201.png)
+    
+    得到距离后由简单的物理知识可以得到重力引起的误差。重力误差体现在图像上可以由以下公式近似计算(其中H1为装甲板实际高度，hscreen为装甲板在图像上的高度):
+    
+    $Δyscreen=ΔH*H1/hscreen$
     
 - 角度计算
     
@@ -126,9 +140,43 @@ cmake .&& make -j4
     $$
     
 
-# 目前代码仍存在的问题和未来的优化方向：
+## 六.通信协议
+
+**pi—>stm:**
+
+N: 没有检测到目标。
+
+x±12@y±12@ 目标角度，不足两位在前方补0。
+
+**stm—>pi :** 
+
+&：表示开始识别打击符文板 。（暂未使用，后续可能考虑将该部分改为打击静止的装甲板，&打击移动的装甲板，并设置两套不同的参数以适应不同的场景）
+
+%：表示开始识别打击装甲板.
+
+ ~ ：表示待机
+
+# 七.目前代码仍存在的问题和未来的优化方向：
 
 1. pnp测距精度不高，后续会考虑使用激光测距模块提高测距精度。
-2. 读取图片时间开销太高（摄像头仅有30帧），考虑将读取图片作为子线程独立出去，防止阻塞主线程，或者使用帧率更高的摄像头。
+2. 读取图片时间开销太高（摄像头仅有30帧），考虑将读取图片作为子线程独立出去，防止阻塞主线程，或者使用帧率更高的摄像头。（已使用子线程的方式，但性能提升不明显且锁的竞争极为繁复,甚至导致程序难以自发结束，降低了代码的可读性）
 3. 考虑到装甲板的运动速度并不快，可以在检测到装甲板后，取装甲板周围一定区域为ROI，以减少图像处理的时间开销。此外为了防止跟丢，需要在一定帧后对全图进行一次检测。
-4. 变量使用不规范（太懒了不想改）。
+4. 可移植性差，需要做大量的更改才能在其他机器上运行
+5. 变量使用不规范（太懒了不想改）。
+
+## 八.程序运行效果
+
+**一.运行速度**
+
+程序整体基本可以稳定在24帧以上，处理每一帧图像的时间在20ms以下。
+
+![Untitled](XBOTCON2022%E6%97%A0%E9%99%90%E6%9C%BA%E7%94%B2%E6%9D%AF%E8%A7%86%E8%A7%89%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81%E8%AF%B4%E6%98%8E%20f5225b0b791c4da09ce453d7527d6baa/Untitled%202.png)
+
+**二.识别率**
+
+# 九.Notes
+
+- 由于比赛规则临时更改，且截至此时官方并没有最终敲定比赛规则，故在代码中保留了大量预编译指令和未优化的代码，以确保随机应变和完整的呈现代码框架。
+- 受到本人代码水平的限制，代码并没有采用OOP的编写方式。
+
+**作者：碱基互补配队  自动化科学与工程学院 21级 李佳梁**

@@ -23,10 +23,10 @@ float distancedetection_armer(vector<Point2f> &refer_imgPoint)
 	Mat tvecs;//平移向量
 	vector<Point3f> refer_objectPoints;//自定义的3D坐标点
 	Mat rmats;//旋转矩阵
-	refer_objectPoints.push_back(Point3f(-61, -34.5, 0));
-	refer_objectPoints.push_back(Point3f(61, -34.5, 0));
-	refer_objectPoints.push_back(Point3f(61, 34.5, 0));
-	refer_objectPoints.push_back(Point3f(-61, 34.5, 0));
+	refer_objectPoints.push_back(Point3f(-40, -22.5, 0));
+	refer_objectPoints.push_back(Point3f(40, -22.5, 0));
+	refer_objectPoints.push_back(Point3f(40, 22.5, 0));
+	refer_objectPoints.push_back(Point3f(-40, 22.5, 0));
 	solvePnP(refer_objectPoints, refer_imgPoint, cameraMatrix, distCoeff, rvecs, tvecs,true,SOLVEPNP_EPNP);//solvepnp解算旋转向量和平移向量
 	Rodrigues(rvecs, rmats);
 	Eigen::Matrix3f R_n;
