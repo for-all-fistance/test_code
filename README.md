@@ -79,7 +79,7 @@ cmake .&& make -j4
 
 ## 四.程序时序流程图
 
-![流程图](https://github.com/for-all-fistance/test_code/blob/master/%E5%9B%BE%E7%89%87%E5%8F%8A%E8%A7%86%E9%A2%91/%E6%97%B6%E5%BA%8F%E5%9B%BE.pdf)
+![流程图](https://github.com/for-all-fistance/test_code/blob/master/pictures_and_videos/timeline.pdf)
 
 # 五.主要代码原理：
 
@@ -111,7 +111,7 @@ cmake .&& make -j4
     
     使用OpenCV中的solvepnp（）通过装甲板的四个角点解算旋转向量rvecs，经过rodrigues变换获得旋转矩阵，根据以下公式可以算出三维点坐标信息。
     
-    ![公式1](https://github.com/for-all-fistance/test_code/blob/master/%E5%9B%BE%E7%89%87%E5%8F%8A%E8%A7%86%E9%A2%91/%E5%85%AC%E5%BC%8F1.png)
+    ![公式1](https://github.com/for-all-fistance/test_code/blob/master/pictures_and_videos/equation1.png)
     
     得到距离后由简单的物理知识可以得到重力引起的误差。重力误差体现在图像上可以由以下公式近似计算(其中H1为装甲板实际高度，hscreen为装甲板在图像上的高度):
     
@@ -172,7 +172,7 @@ x±12@y±12@ 目标角度。由于电控无法精确控制云台和底盘旋转�
 
 **二.识别率**
 对于静止物体识别率超过95%，对于运动的物体识别率也在90%以上。
-![测试视频](https://github.com/for-all-fistance/test_code/blob/master/%E5%9B%BE%E7%89%87%E5%8F%8A%E8%A7%86%E9%A2%91/%E8%BF%90%E8%A1%8C%E9%80%9F%E5%BA%A6.png)
+![测试视频](https://github.com/for-all-fistance/test_code/blob/master/pictures_and_videos/test%20result.mp4)
 
 # 九.Notes
 
