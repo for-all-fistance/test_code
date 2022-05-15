@@ -20,20 +20,20 @@ struct armer
 	
 };
 //Point2f distancedetection_armer(vector<Point2f> refer_imgPoint);
-float distancedetection_energy(vector<armer> armers);
+float distancedetection_energy(armer this_armer);
 int color_picker(Mat img);
-void getTarget2dPosition(vector<armer>& armers, const cv::Point2f& offset);
+void getTarget2dPosition(armer& this_armers, const cv::Point2f& offset);
 int ImgPreProcess_DEBUG(Mat &img,Mat &dst);
 int ImgPreProcess_ARMER(Mat &img,Mat &dst);
 int ImgPreProcess_ENERGY(Mat &img,Mat &dst);
 void SetROI(Mat& img,const vector<armer> armers);
-void kalman_filter(vector<armer> &armers);
+void kalman_filter(vector<armer> &armers,armer& this_armer);
 void kalman_filter_static(vector<armer> &armers);
-int armerClassifier(Mat &img,vector<armer>&);
-int energyClassifier(Mat &img,Mat origin,vector<armer> armers);
+int armerClassifier(Mat &img,armer& this_armer,vector<armer>& armers);
+int energyClassifier(Mat &img,Mat origin,vector<armer>& armers);
 int position_adjust(Point2f &);
 int focused(Point2f target);
-void gravity_offset_composite(vector<armer> &armers);
+void gravity_offset_composite(armer &armers);
 
 ////////////new////////
 int get_thread(char& command,int fd,bool &stop);

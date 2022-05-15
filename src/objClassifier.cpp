@@ -57,14 +57,14 @@ int pair_armer(vector<armer>& armers,int count,armer &this_armer)
         }
     return 0;
 }
-int armerClassifier(Mat &img,vector<armer> &armers)
+int armerClassifier(Mat &img,armer &this_armer,vector<armer>& armers)
 {
     vector<Vec4i> hierarchy;//储存边界的拓扑信息，如前一个轮廓，后一个轮廓，父轮廓等
     vector<vector<Point>> contours;//储存边界信息,不能使用point2f类型，contours都是point(int)类型
     findContours(img, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);//寻找边界
     int count=0;
     //cout<<"size:"<<contours.size()<<endl;
-    armer temp;
+    //armer this_armer;
     for(int i=0;i<contours.size();++i)
     {
         float area=contourArea(contours[i]);
@@ -77,11 +77,11 @@ int armerClassifier(Mat &img,vector<armer> &armers)
             //cout<<"arearate:"<<areaRate<<endl;
             if(areaRate>MINAREARATE_ARMER&&areaRate<MAXAREARATE_ARMER)
             {
-                temp.height=minAreaRect_armer.size.height;
-                temp.width=minAreaRect_armer.size.width;
-                if(temp.height<=temp.width)
-                    swap(temp.height,temp.width);
-                float lenthRate=temp.height/temp.width;//矩形长宽比
+                this_armer.height=minAreaRect_armer.size.height;
+                this_armer.width=minAreaRect_armer.size.width;
+                if(this_armer.height<=this_armer.width)
+                    swap(this_armer.height,this_armer.width);
+                float lenthRate=this_armer.height/this_armer.width;//矩形长宽比
                 //cout<<"lenthRate:"<<lenthRate<<endl;
                 if(lenthRate>MINLENTHRATE_ARMER&&lenthRate<MAXLENTHRATE_ARMER)
                 {
@@ -91,7 +91,7 @@ int armerClassifier(Mat &img,vector<armer> &armers)
                     //cout<<"solidity:"<<solidity<<endl;
                     if(solidity>MINSOLIDITY_ARMER)
                     {
-                        temp.armer_light.push_back(minAreaRect_armer);
+                        this_armer.armer_light.push_back(minAreaRect_armer);
                         ++count;
                     }
                 }
@@ -101,7 +101,7 @@ int armerClassifier(Mat &img,vector<armer> &armers)
     //cout<<"count"<<count<<endl;
     if(count>1)
     {
-        return pair_armer(armers,count,temp);
+        return pair_armer(armers,count,this_armer);
     }
     return 0;
 }
@@ -204,11 +204,11 @@ int armerClassifier(Mat &img,Mat origin,vector<Point2f> &armer_center)
             armer_rect.push_back(minAreaRect(contours[i]));
             imshow("armer img",img);
             count++;
-            Point2f temp[4];
-            armer_rect[armer_rect.size()-1].points(temp);
+            Point2f this_armer[4];
+            armer_rect[armer_rect.size()-1].points(this_armer);
             for(int i=0;i<4;++i)
             {
-                line(origin,temp[i],temp[(i+1)%4],Scalar(120,200,0),5);
+                line(origin,this_armer[i],this_armer[(i+1)%4],Scalar(120,200,0),5);
             }
             if(count>1)
             {
@@ -247,11 +247,11 @@ int energyClassifier(Mat &img,Mat origin,vector<RotatedRect> &energy_rect)
         vector<vector<Point>> HullPoints(contours.size());
         convexHull(Mat(contours[i]),HullPoints[i],false);
         float solidity=area/contourArea(HullPoints[i]);
-        Point2f temp[4];
-        minAreaRect(contours[i]).points(temp);
+        Point2f this_armer[4];
+        minAreaRect(contours[i]).points(this_armer);
         for(int i=0;i<4;++i)
         {
-            line(origin,temp[i],temp[i%4],(149,255,0));
+            line(origin,this_armer[i],this_armer[i%4],(149,255,0));
         }
         imshow("energy_found",img);
         if(area>200&&areaRate>MINAREARATE_ARMER&&areaRate<MAXAREARATE_ARMER&&lenthRate>MINLENTHRATE_ARMER&&solidity>MINSOLIDITY_ARMER)

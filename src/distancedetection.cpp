@@ -14,7 +14,6 @@
 #include "head.h"
 using namespace cv;
 using namespace std;
-const double PI = 3.141592653;
 
 
 float distancedetection_armer(vector<Point2f> &refer_imgPoint)
@@ -39,11 +38,11 @@ float distancedetection_armer(vector<Point2f> &refer_imgPoint)
 	return(P_oc.z()*0.0001);//m
 }
 
-void gravity_offset_composite(vector<armer> &armers)
+void gravity_offset_composite(armer &this_armers)
 {
-	float distance=distancedetection_armer(armers.back().armer_refer_imgPoint);
-	float gravity_offset=(9.8*distance*distance*armers.back().height)/(2*SPEED_BULLET*SPEED_BULLET*REAL_HEIGHT_ARMER);
-	armers.back().armer_center.y-=gravity_offset;
+	float distance=distancedetection_armer(this_armers.armer_refer_imgPoint);
+	float gravity_offset=(9.8*distance*distance*this_armers.height)/(2*SPEED_BULLET*SPEED_BULLET*REAL_HEIGHT_ARMER);
+	this_armers.armer_center.y-=gravity_offset;
 }
 
 

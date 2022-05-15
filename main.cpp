@@ -46,13 +46,8 @@ int main()
 {
 	Mat img;
 	Size imageSize = Size(imageWidth, imageHeight);
-	vector<RotatedRect> energy_rect;
 	vector< vector<Point2f>> energy_refer_imgPoint;//对应的能量条2D图像点
 	Point2f point_angle;
-	///////////test//////////
-	double time_all=0;
-	int frame=0;
-	//////////test//////////
 	char command='~';
 	bool success =false;
 	vector<armer> armers;
@@ -61,7 +56,7 @@ int main()
 	int fd=serial_init();
 	if(fd==-1)
 		return -1;
-	thread get_th=thread(get_thread,std::ref(command),fd,std::ref(stop));
+	thread get_th=thread(get_thread,std::ref(command),fd,std::ref(stop));//启动子线程
 	thread send_th=thread(send_thread,fd,std::ref(point_angle),std::ref(stop));
 	thread cap_th=thread(cap_thread,std::ref(img),std::ref(stop));
 	waitKey(1000);
@@ -83,7 +78,7 @@ int main()
 		{
 			++armer_count;
 			unique_lock <mutex> lock_cap(mutex_cap);
-			cv_cap.wait(lock_cap);
+			cv_cap.wait(lock_cap);//等待cap_thread获取到图像后唤醒
 			Mat dst;
 			//if(success)
 				//{
@@ -93,26 +88,27 @@ int main()
 			unique_lock <mutex> lock_img(mutex_img);
 			ImgPreProcess_ARMER(img,dst);
 			lock_img.unlock();
-			success=armerClassifier(dst,armers);
+			armer this_armer;
+			success=armerClassifier(dst,this_armer,armers);
 			if(success)
 			{
-				getTarget2dPosition(armers,Point2f(0,0));
-				undistortPoints(armers.back().armer_refer_imgPoint,armers.back().armer_refer_imgPoint,cameraMatrix,distCoeff,noArray(),cameraMatrix);
-				armers.back().armer_center=(armers.back().armer_refer_imgPoint[1]+armers.back().armer_refer_imgPoint[3])/2.0;
-				circle(dst,armers.back().armer_center,5,Scalar(120,200,0),FILLED);
-				gravity_offset_composite(armers);
-				kalman_filter(armers);
+				getTarget2dPosition(this_armer,Point2f(0,0));
+				undistortPoints(this_armer.armer_refer_imgPoint,this_armer.armer_refer_imgPoint,cameraMatrix,distCoeff,noArray(),cameraMatrix);
+				this_armer.armer_center=(this_armer.armer_refer_imgPoint[1]+this_armer.armer_refer_imgPoint[3])/2.0;
+				gravity_offset_composite(this_armer);
+				armers.push_back(this_armer);
+				kalman_filter(armers,this_armer);
 				unique_lock <mutex> lock(mutex_send);
-				point_angle=angle_solver(armers.back().armer_center);
-				cv_send.notify_one();
+				point_angle=angle_solver(this_armer.armer_center);
+				cv_send.notify_one();//唤醒子线程，发送指令
 			}
 			else
 			{
 				lock_guard<mutex> lock_fd(mutex_fd);
-				serialPutchar(fd,'N');
+				serialPutchar(fd,'N');//未识别到装甲板，发送‘N’
 			}
 		}
-		#if 0
+		#if DEBUG
 		else if(command=='&')//static object
 		{
 			unique_lock <mutex> lock_cap(mutex_cap);
