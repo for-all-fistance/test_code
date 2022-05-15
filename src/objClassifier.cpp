@@ -52,7 +52,6 @@ int pair_armer(vector<armer>& armers,int count,armer &this_armer)
             Rect2f r2=(*(target-j_small)).boundingRect();
             Rect2f all_rect=r1|r2;
             this_armer.armer_rect=all_rect;
-            armers.push_back(this_armer);
             return 1;
         }
     return 0;

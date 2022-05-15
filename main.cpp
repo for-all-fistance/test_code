@@ -30,7 +30,7 @@ condition_variable cv_cap;
 bool stop=false;
 
 
-Point2d angle_solver(Point2f &P_oc)
+Point2d angle_solver(Point2f &P_oc)//计算角度
 {
 	static double cx=cameraMatrix.at<double>(0,2);
 	static double cy=cameraMatrix.at<double>(1,2);
@@ -60,7 +60,7 @@ int main()
 	thread send_th=thread(send_thread,fd,std::ref(point_angle),std::ref(stop));
 	thread cap_th=thread(cap_thread,std::ref(img),std::ref(stop));
 	waitKey(1000);
-	while (frame<1000)
+	while (true)
 	{
 		cout<<"command:"<<command<<endl;
 		clock_t startTime = clock();
@@ -76,7 +76,6 @@ int main()
 		}
 		else if(command=='%')
 		{
-			++armer_count;
 			unique_lock <mutex> lock_cap(mutex_cap);
 			cv_cap.wait(lock_cap);//等待cap_thread获取到图像后唤醒
 			Mat dst;
@@ -96,8 +95,8 @@ int main()
 				undistortPoints(this_armer.armer_refer_imgPoint,this_armer.armer_refer_imgPoint,cameraMatrix,distCoeff,noArray(),cameraMatrix);
 				this_armer.armer_center=(this_armer.armer_refer_imgPoint[1]+this_armer.armer_refer_imgPoint[3])/2.0;
 				gravity_offset_composite(this_armer);
-				armers.push_back(this_armer);
 				kalman_filter(armers,this_armer);
+				armers.push_back(this_armer);
 				unique_lock <mutex> lock(mutex_send);
 				point_angle=angle_solver(this_armer.armer_center);
 				cv_send.notify_one();//唤醒子线程，发送指令
@@ -144,7 +143,7 @@ int main()
 			return -1;
 		}
 		clock_t endTime = clock();
-		cout << "该帧用时：" << this_time << "s" << endl;
+		cout << "该帧用时：" << double(endTime - startTime) / CLOCKS_PER_SEC << "s" << endl;
 	}
 	stop=true;
 	mutex_send.unlock();
