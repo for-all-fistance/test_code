@@ -72,15 +72,15 @@ int send_thread(int fd,Point2f &point_angle,bool &stop)
 
 //VideoCapture cap("/home/pi/Desktop/xbotcon/armer test.avi");
 VideoCapture cap(0);
-int cap_thread(Mat &img,bool &stop)
+int cap_thread(Mat &img,Mat &dst,bool &stop)
 {
 	cap.set(CAP_PROP_FOURCC, VideoWriter::fourcc('M', 'J', 'P', 'G'));
 	Mat temp;
 	while(stop!=true)
 	{
-		cap>>temp;
+		cap>>img;
 		unique_lock <mutex> lock_img(mutex_img);
-		img=temp;
+		ImgPreProcess_ARMER(img,dst);
 		lock_img.unlock();
 		cv_cap.notify_all();
 	}

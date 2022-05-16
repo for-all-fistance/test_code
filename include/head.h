@@ -38,7 +38,7 @@ void gravity_offset_composite(armer &armers);
 ////////////new////////
 int get_thread(char& command,int fd,bool &stop);
 int send_thread(int fd,Point2f &point_angle,bool &stop);
-int cap_thread(Mat &img,bool &stop);
+int cap_thread(Mat &img,Mat &dst,bool &stop);
 int serial_init();
 #endif
 

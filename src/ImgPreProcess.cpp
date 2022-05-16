@@ -24,8 +24,8 @@ int ImgPreProcess_ARMER(Mat &img,Mat &dst)
        Mat blueImg=channels.at(0)-channels.at(2);
        //threshold(blueImg,threash,0,255,THRESH_OTSU);
        threshold(blueImg,threash, threash_num, 255, THRESH_BINARY);
-       Mat element = getStructuringElement(MORPH_RECT, Size(3,3));
-       dilate(threash, dst, element);
+       //Mat element = getStructuringElement(MORPH_RECT, Size(3,3));
+       //dilate(threash, dst, element);
        return 0;
 }
 
