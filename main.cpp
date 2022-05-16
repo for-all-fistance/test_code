@@ -58,7 +58,8 @@ int main()
 		return -1;
 	thread get_th=thread(get_thread,std::ref(command),fd,std::ref(stop));//启动子线程
 	thread send_th=thread(send_thread,fd,std::ref(point_angle),std::ref(stop));
-	thread cap_th=thread(cap_thread,std::ref(img),std::ref(stop));
+	Mat dst;
+	thread cap_th=thread(cap_thread,std::ref(img),std::ref(dst),std::ref(stop));
 	waitKey(1000);
 	while (true)
 	{
@@ -78,17 +79,15 @@ int main()
 		{
 			unique_lock <mutex> lock_cap(mutex_cap);
 			cv_cap.wait(lock_cap);//等待cap_thread获取到图像后唤醒
-			Mat dst;
 			//if(success)
 				//{
 					//SetROI(img,armer_real_position.back());
 					//imshow("ROI",img);
 				//}
 			unique_lock <mutex> lock_img(mutex_img);
-			ImgPreProcess_ARMER(img,dst);
-			lock_img.unlock();
 			armer this_armer;
 			success=armerClassifier(dst,this_armer,armers);
+			lock_img.unlock();
 			if(success)
 			{
 				getTarget2dPosition(this_armer,Point2f(0,0));
